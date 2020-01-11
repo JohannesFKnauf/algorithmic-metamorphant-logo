@@ -8,8 +8,8 @@
   (let [canvas {:width 1000 :height 1000}
         dot-radius 55
         line-width 64
-        corner-arc-radius 190
-        eye-offset 270
+        corner-arc-radius 160
+        eye-offset 265
         eye {:x (- (:width canvas) eye-offset)
              :y eye-offset}
         inner-outline-dot {:x (/ (:width canvas) (+ 1 golden-ratio))
