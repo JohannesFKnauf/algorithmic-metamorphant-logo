@@ -17,7 +17,11 @@
         inner-ear-dot {:x (:x inner-outline-dot)
                        :y (- (:y eye) (/ (:y eye) (+ 1 golden-ratio)))}
         line-padding (float (/ line-width 2))
-        ear-end {:x (- (:x eye) line-padding)
+        bottom-right-dot {:x (- (:width canvas) line-padding corner-arc-radius)
+                   :y (- (:height canvas) line-padding)}
+        bottom-middle-dot {:x (+ (:x inner-outline-dot) (/ (- (:x bottom-right-dot) (:x inner-outline-dot)) (+ 1 golden-ratio)))
+                           :y (- (:height canvas) line-padding)}
+        ear-end {:x (+ (:x bottom-middle-dot) corner-arc-radius)
                  :y (/ (:height canvas) 2)}
         dot-diameter (* 2 dot-radius)
         view-box-padding-x (- line-padding dot-radius)
@@ -61,8 +65,8 @@
         :A [corner-arc-radius
             corner-arc-radius]
         0 false true
-        [(- (:width canvas) corner-arc-radius line-padding)
-         (- (:height canvas) line-padding)]]
+        [(:x bottom-right-dot)
+         (:y bottom-right-dot)]]
        [:path line-style
         :M [(:x inner-ear-dot)
             (:y inner-ear-dot)]
@@ -89,7 +93,8 @@
        [:line {:x1 0 :y1 (:y eye) :x2 (:width canvas) :y2 (:y eye) :stroke "blue" :stroke-width "4"}]    ; horizontal: eye positions
        [:line {:x1 0 :y1 (:y inner-outline-dot) :x2 (:width canvas) :y2 (:y inner-outline-dot) :stroke "blue" :stroke-width "4"}]    ; horizontal: inner outline dot positions
        [:line {:x1 0 :y1 (:y inner-ear-dot) :x2 (:width canvas) :y2 (:y inner-ear-dot) :stroke "blue" :stroke-width "4"}]    ; horizontal: inner ear dot positions
-       [:line {:x1 (:x eye) :y1 0 :x2 (:x eye) :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]  ; vertical: right border of lower ear vertical line
+       [:line {:x1 (:x bottom-right-dot) :y1 0 :x2 (:x bottom-right-dot) :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]  ; vertical: right dot position
+       [:line {:x1 (:x bottom-middle-dot) :y1 0 :x2 (:x bottom-middle-dot) :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]  ; vertical: middle dot position
        [:line {:x1 0 :y1 (:y ear-end) :x2 (:width canvas) :y2 (:y ear-end) :stroke "blue" :stroke-width "4"}]  ; horizontal: ear end line positions
        ]))
 
