@@ -95,8 +95,12 @@
        ]))
 
 (defn -main []
-  (dali.io/render-svg (logo {:dot-radius 55
-                             :line-width 64
-                             :corner-arc-radius 160
-                             :eye-offset 265})
-                      "metamorphant.svg"))
+  (doseq [dot-radius [40 55 70]
+          line-width [50 64 80]
+          corner-arc-radius [100 160 220]
+          eye-offset [230 265 300]]
+    (dali.io/render-svg (logo {:dot-radius dot-radius
+                               :line-width line-width
+                               :corner-arc-radius corner-arc-radius
+                               :eye-offset eye-offset})
+                        (str "metamorphant" "-" dot-radius "-" line-width "-" corner-arc-radius "-" eye-offset ".svg"))))
