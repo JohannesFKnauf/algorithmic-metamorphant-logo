@@ -4,7 +4,16 @@
 (def golden-ratio
   1.61803398875)
 
-(defn logo [{:keys [dot-radius line-width corner-arc-radius eye-offset]}]
+(defn logo [{:keys [dot-radius
+                    line-width
+                    corner-arc-radius
+                    eye-offset
+                    show-guiding-lines] :or
+             {dot-radius 55
+              line-width 64
+              corner-arc-radius 160
+              eye-offset 265
+              show-guiding-lines false}}]
   (let [canvas {:width 1000 :height 1000}
         eye {:x (- (:width canvas) eye-offset)
              :y eye-offset}
@@ -83,18 +92,20 @@
         [(- (:x ear-end) corner-arc-radius)
          (- (:height canvas) line-padding)]]
        [:use {:x (:x eye) :y (:y eye) :xlink:href "#bubbel"}]
-       ;; [:rect {:x 0 :y 0 :width (:width canvas) :height (:height canvas) :fill "none" :stroke "blue" :stroke-width "4"}]  ; frame
-       ;; [:line {:x1 (:x inner-outline-dot) :y1 0 :x2 (:x inner-outline-dot) :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]  ; vertical: left inner dot positions
-       ;; [:line {:x1 (:width canvas) :y1 0 :x2 0 :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]   ; diagonal: eye positions
-       ;; [:line {:x1 0 :y1 (:y eye) :x2 (:width canvas) :y2 (:y eye) :stroke "blue" :stroke-width "4"}]    ; horizontal: eye positions
-       ;; [:line {:x1 0 :y1 (:y inner-outline-dot) :x2 (:width canvas) :y2 (:y inner-outline-dot) :stroke "blue" :stroke-width "4"}]    ; horizontal: inner outline dot positions
-       ;; [:line {:x1 0 :y1 (:y inner-ear-dot) :x2 (:width canvas) :y2 (:y inner-ear-dot) :stroke "blue" :stroke-width "4"}]    ; horizontal: inner ear dot positions
-       ;; [:line {:x1 (:x bottom-right-dot) :y1 0 :x2 (:x bottom-right-dot) :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]  ; vertical: right dot position
-       ;; [:line {:x1 (:x bottom-middle-dot) :y1 0 :x2 (:x bottom-middle-dot) :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]  ; vertical: middle dot position
-       ;; [:line {:x1 0 :y1 (:y ear-end) :x2 (:width canvas) :y2 (:y ear-end) :stroke "blue" :stroke-width "4"}]  ; horizontal: ear end line positions
+       (when show-guiding-lines [:g 
+                                 [:rect {:x 0 :y 0 :width (:width canvas) :height (:height canvas) :fill "none" :stroke "blue" :stroke-width "4"}]  ; frame
+                                 [:line {:x1 (:x inner-outline-dot) :y1 0 :x2 (:x inner-outline-dot) :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]  ; vertical: left inner dot positions
+                                 [:line {:x1 (:width canvas) :y1 0 :x2 0 :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]   ; diagonal: eye positions
+                                 [:line {:x1 0 :y1 (:y eye) :x2 (:width canvas) :y2 (:y eye) :stroke "blue" :stroke-width "4"}]    ; horizontal: eye positions
+                                 [:line {:x1 0 :y1 (:y inner-outline-dot) :x2 (:width canvas) :y2 (:y inner-outline-dot) :stroke "blue" :stroke-width "4"}]    ; horizontal: inner outline dot positions
+                                 [:line {:x1 0 :y1 (:y inner-ear-dot) :x2 (:width canvas) :y2 (:y inner-ear-dot) :stroke "blue" :stroke-width "4"}]    ; horizontal: inner ear dot positions
+                                 [:line {:x1 (:x bottom-right-dot) :y1 0 :x2 (:x bottom-right-dot) :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]  ; vertical: right dot position
+                                 [:line {:x1 (:x bottom-middle-dot) :y1 0 :x2 (:x bottom-middle-dot) :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]  ; vertical: middle dot position
+                                 [:line {:x1 0 :y1 (:y ear-end) :x2 (:width canvas) :y2 (:y ear-end) :stroke "blue" :stroke-width "4"}]  ; horizontal: ear end line positions
+                                 ])
        ]))
 
-(defn -main []
+(defn render-variants []
   (doseq [dot-radius [40 55 70]
           line-width [50 64 80]
           corner-arc-radius [100 160 220]
@@ -104,3 +115,11 @@
                                :corner-arc-radius corner-arc-radius
                                :eye-offset eye-offset})
                         (str "metamorphant" "-" dot-radius "-" line-width "-" corner-arc-radius "-" eye-offset ".svg"))))
+
+(defn -main []
+  (dali.io/render-svg (logo {:dot-radius 55
+                             :line-width 64
+                             :corner-arc-radius 160
+                             :eye-offset 265
+                             :show-guiding-lines false})
+                      "metamorphant-animation.svg"))
