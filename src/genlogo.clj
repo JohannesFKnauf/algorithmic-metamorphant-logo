@@ -33,13 +33,13 @@
         view-box-padding-y view-box-padding-x
         total-width (- (:width canvas) (* 2 view-box-padding-x))
         total-height (- (:height canvas) (* 2 view-box-padding-y))
-        line-style {:stroke "#02324b" :path-length 1000 :stroke-width line-width :stroke-linejoin "round" :fill "none" :marker-start "url(#bm)" :marker-end "url(#bm)"}]
+        line-style {:stroke "#02324b" :path-length 1000 :stroke-width line-width :stroke-linejoin "round" :stroke-linecap "round" :fill "none" :marker-start "url(#bm)" :marker-end "url(#bm)"}]
       [:dali/page {:width "100%" :height "100%" :view-box (str view-box-padding-x " " view-box-padding-y " " total-width " "total-height)}
        [:defs
         [:circle {:id "bubbel" :cx 0 :cy 0 :r dot-radius :fill "#02324b"}]
         [:marker {:id "bm" :view-box (str "0 0 " dot-diameter " " dot-diameter) :ref-x dot-radius :ref-y dot-radius :marker-units "userSpaceOnUse" :marker-width dot-diameter :marker-height dot-diameter}
          [:use {:x dot-radius :y dot-radius :xlink:href "#bubbel"}]]]
-       [:path line-style
+       [:path (merge line-style {:stroke-dasharray 1000 :stroke-dashoffset 1000 :id "hulk"})
         :M [(:x inner-outline-dot)
             (:y inner-outline-dot)]
         :L [(:x inner-outline-dot)
@@ -72,7 +72,7 @@
         0 false true
         [(:x bottom-right-dot)
          (:y bottom-right-dot)]]
-       [:path line-style
+       [:path (merge line-style {:stroke-dasharray 1000 :stroke-dashoffset 1000 :id "ear"})
         :M [(:x inner-ear-dot)
             (:y inner-ear-dot)]
         :L [(:x inner-ear-dot)
@@ -103,6 +103,10 @@
                                  [:line {:x1 (:x bottom-middle-dot) :y1 0 :x2 (:x bottom-middle-dot) :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]  ; vertical: middle dot position
                                  [:line {:x1 0 :y1 (:y ear-end) :x2 (:width canvas) :y2 (:y ear-end) :stroke "blue" :stroke-width "4"}]  ; horizontal: ear end line positions
                                  ])
+       [:animate {:id "revealhulk" :xlink:href "#hulk" :attribute-name "stroke-dashoffset" :from "1000" :to "2000" :begin "0s;hideear.end+0.1s" :dur "1s" :fill "freeze"}]
+       [:animate {:id "revealear" :xlink:href "#ear" :attribute-name "stroke-dashoffset" :from "1000" :to "2000" :begin "revealhulk.end" :dur "1s" :fill "freeze"}]
+       [:animate {:id "hidehulk" :xlink:href "#hulk" :attribute-name "stroke-dashoffset" :from "0" :to "1000" :begin "revealear.end+0.1s" :dur "1s" :fill "freeze"}]
+       [:animate {:id "hideear" :xlink:href "#ear" :attribute-name "stroke-dashoffset" :from "0" :to "1000" :begin "hidehulk.end" :dur "1s" :fill "freeze"}]
        ]))
 
 (defn render-variants []
