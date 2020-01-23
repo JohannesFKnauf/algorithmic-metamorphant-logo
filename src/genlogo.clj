@@ -91,7 +91,9 @@
         0 false true
         [(- (:x ear-end) corner-arc-radius)
          (- (:height canvas) line-padding)]]
-       [:use {:x (:x eye) :y (:y eye) :xlink:href "#bubbel"}]
+       [:use {:id "eye"
+              :transform (str "translate(" (:x eye) " " (:y eye) ")")
+              :xlink:href "#bubbel"}]
        (when show-guiding-lines [:g 
                                  [:rect {:x 0 :y 0 :width (:width canvas) :height (:height canvas) :fill "none" :stroke "blue" :stroke-width "4"}]  ; frame
                                  [:line {:x1 (:x inner-outline-dot) :y1 0 :x2 (:x inner-outline-dot) :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]  ; vertical: left inner dot positions
@@ -103,10 +105,26 @@
                                  [:line {:x1 (:x bottom-middle-dot) :y1 0 :x2 (:x bottom-middle-dot) :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]  ; vertical: middle dot position
                                  [:line {:x1 0 :y1 (:y ear-end) :x2 (:width canvas) :y2 (:y ear-end) :stroke "blue" :stroke-width "4"}]  ; horizontal: ear end line positions
                                  ])
-       [:animate {:id "revealhulk" :xlink:href "#hulk" :attribute-name "stroke-dashoffset" :from "1000" :to "2000" :begin "0s;hideear.end+0.1s" :dur "1s" :fill "freeze"}]
+       [:set {:xlink:href "#eye" :attribute-name "opacity" :to "0.0" :begin "0s" :fill "freeze"}]
+       [:set {:xlink:href "#hulk" :attribute-name "marker-start" :to "none" :begin "0s;hideeye.end+0.1s" :fill "freeze"}]
+       [:set {:xlink:href "#hulk" :attribute-name "marker-end" :to "url(#bm)" :begin "0s;hideeye.end+0.1s" :fill "freeze"}]
+       [:set {:xlink:href "#ear" :attribute-name "marker-start" :to "none" :begin "0s;hideeye.end+0.1s" :fill "freeze"}]
+       [:set {:xlink:href "#ear" :attribute-name "marker-end" :to "none" :begin "0s;hideeye.end+0.1s" :fill "freeze"}]
+       [:animate {:id "revealhulk" :xlink:href "#hulk" :attribute-name "stroke-dashoffset" :from "1000" :to "2000" :begin "0s;hideeye.end+0.1s" :dur "1s" :fill "freeze"}]
+       [:set {:xlink:href "#hulk" :attribute-name "marker-start" :to "url(#bm)" :begin "revealhulk.end" :fill "freeze"}]
+       [:set {:xlink:href "#ear" :attribute-name "marker-end" :to "url(#bm)" :begin "revealhulk.end" :fill "freeze"}]
        [:animate {:id "revealear" :xlink:href "#ear" :attribute-name "stroke-dashoffset" :from "1000" :to "2000" :begin "revealhulk.end" :dur "1s" :fill "freeze"}]
-       [:animate {:id "hidehulk" :xlink:href "#hulk" :attribute-name "stroke-dashoffset" :from "0" :to "1000" :begin "revealear.end+0.1s" :dur "1s" :fill "freeze"}]
+       [:set {:xlink:href "#ear" :attribute-name "marker-start" :to "url(#bm)" :begin "revealear.end" :fill "freeze"}]
+       [:animate {:id "revealeye" :xlink:href "#eye" :attribute-name "opacity" :from "0.0" :to "1.0" :begin "revealear.end" :dur "1s" :fill "freeze"}]
+       [:animateTransform {:id "groweye" :xlink:href "#eye" :attribute-name "transform" :type "scale" :additive "sum" :from "0 0" :to "1 1" :begin "revealear.end" :dur "1s"}]
+       [:set {:xlink:href "#hulk" :attribute-name "marker-end" :to "none" :begin "revealeye.end+0.1s" :fill "freeze"}]
+       [:animate {:id "hidehulk" :xlink:href "#hulk" :attribute-name "stroke-dashoffset" :from "0" :to "1000" :begin "revealeye.end+0.1s" :dur "1s" :fill "freeze"}]
+       [:set {:xlink:href "#hulk" :attribute-name "marker-start" :to "none" :begin "hidehulk.end" :fill "freeze"}]
+       [:set {:xlink:href "#ear" :attribute-name "marker-end" :to "none" :begin "hidehulk.end" :fill "freeze"}]
        [:animate {:id "hideear" :xlink:href "#ear" :attribute-name "stroke-dashoffset" :from "0" :to "1000" :begin "hidehulk.end" :dur "1s" :fill "freeze"}]
+       [:set {:xlink:href "#ear" :attribute-name "marker-start" :to "none" :begin "hideear.end" :fill "freeze"}]
+       [:animate {:id "hideeye" :xlink:href "#eye" :attribute-name "opacity" :from "1.0" :to "0.0" :begin "hideear.end" :dur "1s" :fill "freeze"}]
+       [:animateTransform {:id "shrinkeye" :xlink:href "#eye" :attribute-name "transform" :type "scale" :additive "sum" :from "1 1" :to "0 0" :begin "hideear.end" :dur "1s"}]
        ]))
 
 (defn render-variants []
