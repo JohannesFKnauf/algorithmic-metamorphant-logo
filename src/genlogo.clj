@@ -7,13 +7,11 @@
 (defn logo [{:keys [dot-radius
                     line-width
                     corner-arc-radius
-                    eye-offset
-                    show-guiding-lines] :or
+                    eye-offset] :or
              {dot-radius 55
               line-width 64
               corner-arc-radius 160
-              eye-offset 265
-              show-guiding-lines false}}]
+              eye-offset 265}}]
   (let [canvas {:width 1000 :height 1000}
         eye {:x (- (:width canvas) eye-offset)
              :y eye-offset}
@@ -94,17 +92,6 @@
        [:use {:id "eye"
               :transform (str "translate(" (:x eye) " " (:y eye) ")")
               :xlink:href "#bubbel"}]
-       (when show-guiding-lines [:g 
-                                 [:rect {:x 0 :y 0 :width (:width canvas) :height (:height canvas) :fill "none" :stroke "blue" :stroke-width "4"}]  ; frame
-                                 [:line {:x1 (:x inner-outline-dot) :y1 0 :x2 (:x inner-outline-dot) :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]  ; vertical: left inner dot positions
-                                 [:line {:x1 (:width canvas) :y1 0 :x2 0 :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]   ; diagonal: eye positions
-                                 [:line {:x1 0 :y1 (:y eye) :x2 (:width canvas) :y2 (:y eye) :stroke "blue" :stroke-width "4"}]    ; horizontal: eye positions
-                                 [:line {:x1 0 :y1 (:y inner-outline-dot) :x2 (:width canvas) :y2 (:y inner-outline-dot) :stroke "blue" :stroke-width "4"}]    ; horizontal: inner outline dot positions
-                                 [:line {:x1 0 :y1 (:y inner-ear-dot) :x2 (:width canvas) :y2 (:y inner-ear-dot) :stroke "blue" :stroke-width "4"}]    ; horizontal: inner ear dot positions
-                                 [:line {:x1 (:x bottom-right-dot) :y1 0 :x2 (:x bottom-right-dot) :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]  ; vertical: right dot position
-                                 [:line {:x1 (:x bottom-middle-dot) :y1 0 :x2 (:x bottom-middle-dot) :y2 (:height canvas) :stroke "blue" :stroke-width "4"}]  ; vertical: middle dot position
-                                 [:line {:x1 0 :y1 (:y ear-end) :x2 (:width canvas) :y2 (:y ear-end) :stroke "blue" :stroke-width "4"}]  ; horizontal: ear end line positions
-                                 ])
        [:set {:xlink:href "#eye" :attribute-name "opacity" :to "0.0" :begin "0s" :fill "freeze"}]
        [:set {:xlink:href "#hulk" :attribute-name "marker-start" :to "none" :begin "0s;hideeye.end+0.1s" :fill "freeze"}]
        [:set {:xlink:href "#hulk" :attribute-name "marker-end" :to "url(#bm)" :begin "0s;hideeye.end+0.1s" :fill "freeze"}]
@@ -127,21 +114,9 @@
        [:animateTransform {:id "shrinkeye" :xlink:href "#eye" :attribute-name "transform" :type "scale" :additive "sum" :from "1 1" :to "0 0" :begin "hideear.end" :dur "1s"}]
        ]))
 
-(defn render-variants []
-  (doseq [dot-radius [40 55 70]
-          line-width [50 64 80]
-          corner-arc-radius [100 160 220]
-          eye-offset [230 265 300]]
-    (dali.io/render-svg (logo {:dot-radius dot-radius
-                               :line-width line-width
-                               :corner-arc-radius corner-arc-radius
-                               :eye-offset eye-offset})
-                        (str "metamorphant" "-" dot-radius "-" line-width "-" corner-arc-radius "-" eye-offset ".svg"))))
-
 (defn -main []
   (dali.io/render-svg (logo {:dot-radius 55
                              :line-width 64
                              :corner-arc-radius 160
-                             :eye-offset 265
-                             :show-guiding-lines false})
+                             :eye-offset 265})
                       "metamorphant-animation.svg"))
