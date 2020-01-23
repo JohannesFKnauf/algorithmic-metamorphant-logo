@@ -31,12 +31,10 @@
         view-box-padding-y view-box-padding-x
         total-width (- (:width canvas) (* 2 view-box-padding-x))
         total-height (- (:height canvas) (* 2 view-box-padding-y))
-        line-style {:stroke "#02324b" :path-length 1000 :stroke-width line-width :stroke-linejoin "round" :stroke-linecap "round" :fill "none" :marker-start "url(#bm)" :marker-end "url(#bm)"}]
+        line-style {:stroke "#02324b" :path-length 1000 :stroke-width line-width :stroke-linejoin "round" :stroke-linecap "round" :fill "none" :marker-start "none" :marker-end "none"}]
       [:dali/page {:width "100%" :height "100%" :view-box (str view-box-padding-x " " view-box-padding-y " " total-width " "total-height)}
        [:defs
-        [:circle {:id "bubbel" :cx 0 :cy 0 :r dot-radius :fill "#02324b"}]
-        [:marker {:id "bm" :view-box (str "0 0 " dot-diameter " " dot-diameter) :ref-x dot-radius :ref-y dot-radius :marker-units "userSpaceOnUse" :marker-width dot-diameter :marker-height dot-diameter}
-         [:use {:x dot-radius :y dot-radius :xlink:href "#bubbel"}]]]
+        [:circle {:id "bubbel" :cx 0 :cy 0 :r dot-radius :fill "#02324b"}]]
        [:path (merge line-style {:stroke-dasharray 1000 :stroke-dashoffset 1000 :id "hulk"})
         :M [(:x inner-outline-dot)
             (:y inner-outline-dot)]
@@ -90,26 +88,71 @@
         [(- (:x ear-end) corner-arc-radius)
          (- (:height canvas) line-padding)]]
        [:use {:id "eye"
+              :opacity "0.0"
               :transform (str "translate(" (:x eye) " " (:y eye) ")")
               :xlink:href "#bubbel"}]
-       [:set {:xlink:href "#eye" :attribute-name "opacity" :to "0.0" :begin "0s" :fill "freeze"}]
-       [:set {:xlink:href "#hulk" :attribute-name "marker-start" :to "none" :begin "0s;hideeye.end+0.1s" :fill "freeze"}]
-       [:set {:xlink:href "#hulk" :attribute-name "marker-end" :to "url(#bm)" :begin "0s;hideeye.end+0.1s" :fill "freeze"}]
-       [:set {:xlink:href "#ear" :attribute-name "marker-start" :to "none" :begin "0s;hideeye.end+0.1s" :fill "freeze"}]
-       [:set {:xlink:href "#ear" :attribute-name "marker-end" :to "none" :begin "0s;hideeye.end+0.1s" :fill "freeze"}]
+       [:use {:id "hulk-start" :opacity 0.0 :x 0 :y 0 :xlink:href "#bubbel"}]
+       [:use {:id "hulk-end" :opacity 0.0 :x 0 :y 0 :xlink:href "#bubbel"}]
+       [:use {:id "ear-start" :opacity 0.0 :x 0 :y 0 :xlink:href "#bubbel"}]
+       [:use {:id "ear-end" :opacity 0.0 :x 0 :y 0 :xlink:href "#bubbel"}]
+
+       ; pre-revealhulk
+       [:set {:xlink:href "#hulk-start" :attribute-name "opacity" :to "1.0" :begin "0s;hideeye.end+0.1s" :fill "freeze"}]
+       [:set {:xlink:href "#hulk-end" :attribute-name "opacity" :to "1.0" :begin "0s;hideeye.end+0.1s" :fill "freeze"}]
+
+       ; revealhulk
        [:animate {:id "revealhulk" :xlink:href "#hulk" :attribute-name "stroke-dashoffset" :from "1000" :to "2000" :begin "0s;hideeye.end+0.1s" :dur "1s" :fill "freeze"}]
-       [:set {:xlink:href "#hulk" :attribute-name "marker-start" :to "url(#bm)" :begin "revealhulk.end" :fill "freeze"}]
-       [:set {:xlink:href "#ear" :attribute-name "marker-end" :to "url(#bm)" :begin "revealhulk.end" :fill "freeze"}]
+
+       ; revealhulk dots
+       [:animateMotion {:xlink:href "#hulk-start" :begin "0s;hideeye.end+0.1s" :dur "1s" :fill "freeze" :keyTimes "0 ; 1" :keyPoints "1 ; 0"}
+        [:mpath {:xlink:href "#hulk"}]]
+       [:animateMotion {:xlink:href "#hulk-end" :begin "0s;hideeye.end+0.1s" :dur "1s" :fill "freeze" :keyTimes "0 ; 1" :keyPoints "1 ; 1"}
+        [:mpath {:xlink:href "#hulk"}]]
+
+       ; pre-revealear
+       [:set {:xlink:href "#ear-start" :attribute-name "opacity" :to "1.0" :begin "revealhulk.end" :fill "freeze"}]
+       [:set {:xlink:href "#ear-end" :attribute-name "opacity" :to "1.0" :begin "revealhulk.end" :fill "freeze"}]
+
+       ; revealear
        [:animate {:id "revealear" :xlink:href "#ear" :attribute-name "stroke-dashoffset" :from "1000" :to "2000" :begin "revealhulk.end" :dur "1s" :fill "freeze"}]
-       [:set {:xlink:href "#ear" :attribute-name "marker-start" :to "url(#bm)" :begin "revealear.end" :fill "freeze"}]
+
+       ; revealear dots
+       [:animateMotion {:xlink:href "#ear-start" :begin "revealhulk.end" :dur "1s" :fill "freeze" :keyTimes "0 ; 1" :keyPoints "1 ; 0"}
+        [:mpath {:xlink:href "#ear"}]]
+       [:animateMotion {:xlink:href "#ear-end" :begin "revealhulk.end" :dur "1s" :fill "freeze" :keyTimes "0 ; 1" :keyPoints "1 ; 1"}
+        [:mpath {:xlink:href "#ear"}]]
+
+       ; revealeye + groweye
        [:animate {:id "revealeye" :xlink:href "#eye" :attribute-name "opacity" :from "0.0" :to "1.0" :begin "revealear.end" :dur "1s" :fill "freeze"}]
        [:animateTransform {:id "groweye" :xlink:href "#eye" :attribute-name "transform" :type "scale" :additive "sum" :from "0 0" :to "1 1" :begin "revealear.end" :dur "1s"}]
-       [:set {:xlink:href "#hulk" :attribute-name "marker-end" :to "none" :begin "revealeye.end+0.1s" :fill "freeze"}]
+
+       ; hidehulk
        [:animate {:id "hidehulk" :xlink:href "#hulk" :attribute-name "stroke-dashoffset" :from "0" :to "1000" :begin "revealeye.end+0.1s" :dur "1s" :fill "freeze"}]
-       [:set {:xlink:href "#hulk" :attribute-name "marker-start" :to "none" :begin "hidehulk.end" :fill "freeze"}]
-       [:set {:xlink:href "#ear" :attribute-name "marker-end" :to "none" :begin "hidehulk.end" :fill "freeze"}]
+
+       ; hidehulk dots
+       [:animateMotion {:xlink:href "#hulk-start" :begin "revealeye.end+0.1s" :dur "1s" :fill "freeze" :keyTimes "0 ; 1" :keyPoints "0 ; 0"}
+        [:mpath {:xlink:href "#hulk"}]]
+       [:animateMotion {:xlink:href "#hulk-end" :begin "revealeye.end+0.1s" :dur "1s" :fill "freeze" :keyTimes "0 ; 1" :keyPoints "1 ; 0"}
+        [:mpath {:xlink:href "#hulk"}]]
+
+       ; post-hidehulk
+       [:set {:xlink:href "#hulk-start" :attribute-name "opacity" :to "0.0" :begin "hidehulk.end" :fill "freeze"}]
+       [:set {:xlink:href "#hulk-end" :attribute-name "opacity" :to "0.0" :begin "hidehulk.end" :fill "freeze"}]
+
+       ; hideear
        [:animate {:id "hideear" :xlink:href "#ear" :attribute-name "stroke-dashoffset" :from "0" :to "1000" :begin "hidehulk.end" :dur "1s" :fill "freeze"}]
-       [:set {:xlink:href "#ear" :attribute-name "marker-start" :to "none" :begin "hideear.end" :fill "freeze"}]
+
+       ; hideear dots
+       [:animateMotion {:xlink:href "#ear-start" :begin "hidehulk.end" :dur "1s" :fill "freeze" :keyTimes "0 ; 1" :keyPoints "0 ; 0"}
+        [:mpath {:xlink:href "#ear"}]]
+       [:animateMotion {:xlink:href "#ear-end" :begin "hidehulk.end" :dur "1s" :fill "freeze" :keyTimes "0 ; 1" :keyPoints "1 ; 0"}
+        [:mpath {:xlink:href "#ear"}]]
+
+       ; post-hideear
+       [:set {:xlink:href "#ear-start" :attribute-name "opacity" :to "0.0" :begin "hideear.end" :fill "freeze"}]
+       [:set {:xlink:href "#ear-end" :attribute-name "opacity" :to "0.0" :begin "hideear.end" :fill "freeze"}]       
+
+       ; hideeye + shrinkeye
        [:animate {:id "hideeye" :xlink:href "#eye" :attribute-name "opacity" :from "1.0" :to "0.0" :begin "hideear.end" :dur "1s" :fill "freeze"}]
        [:animateTransform {:id "shrinkeye" :xlink:href "#eye" :attribute-name "transform" :type "scale" :additive "sum" :from "1 1" :to "0 0" :begin "hideear.end" :dur "1s"}]
        ]))
