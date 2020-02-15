@@ -104,9 +104,9 @@
        [:animate {:id "revealhulk" :xlink:href "#hulk" :attribute-name "stroke-dashoffset" :from "1000" :to "2000" :begin "0s;hideeye.end+0.1s" :dur "1s" :fill "freeze"}]
 
        ; revealhulk dots
-       [:animateMotion {:xlink:href "#hulk-start" :begin "0s;hideeye.end+0.1s" :dur "1s" :fill "freeze" :keyTimes "0 ; 1" :keyPoints "1 ; 0"}
+       [:animateMotion {:xlink:href "#hulk-start" :begin "0s;hideeye.end+0.1s" :dur "1s" :fill "freeze" :calc-mode "linear" :key-times "0 ; 1" :key-points "1 ; 0"}
         [:mpath {:xlink:href "#hulk"}]]
-       [:animateMotion {:xlink:href "#hulk-end" :begin "0s;hideeye.end+0.1s" :dur "1s" :fill "freeze" :keyTimes "0 ; 1" :keyPoints "1 ; 1"}
+       [:animateMotion {:xlink:href "#hulk-end" :begin "0s;hideeye.end+0.1s" :dur "1s" :fill "freeze" :calc-mode "linear" :key-times "0 ; 1" :key-points "1 ; 1"}
         [:mpath {:xlink:href "#hulk"}]]
 
        ; pre-revealear
@@ -117,9 +117,9 @@
        [:animate {:id "revealear" :xlink:href "#ear" :attribute-name "stroke-dashoffset" :from "1000" :to "2000" :begin "revealhulk.end" :dur "1s" :fill "freeze"}]
 
        ; revealear dots
-       [:animateMotion {:xlink:href "#ear-start" :begin "revealhulk.end" :dur "1s" :fill "freeze" :keyTimes "0 ; 1" :keyPoints "1 ; 0"}
+       [:animateMotion {:xlink:href "#ear-start" :begin "revealhulk.end" :dur "1s" :fill "freeze" :calc-mode "linear" :key-times "0 ; 1" :key-points "1 ; 0"}
         [:mpath {:xlink:href "#ear"}]]
-       [:animateMotion {:xlink:href "#ear-end" :begin "revealhulk.end" :dur "1s" :fill "freeze" :keyTimes "0 ; 1" :keyPoints "1 ; 1"}
+       [:animateMotion {:xlink:href "#ear-end" :begin "revealhulk.end" :dur "1s" :fill "freeze" :calc-mode "linear" :key-times "0 ; 1" :key-points "1 ; 1"}
         [:mpath {:xlink:href "#ear"}]]
 
        ; revealeye + groweye
@@ -130,9 +130,9 @@
        [:animate {:id "hidehulk" :xlink:href "#hulk" :attribute-name "stroke-dashoffset" :from "0" :to "1000" :begin "revealeye.end+0.1s" :dur "1s" :fill "freeze"}]
 
        ; hidehulk dots
-       [:animateMotion {:xlink:href "#hulk-start" :begin "revealeye.end+0.1s" :dur "1s" :fill "freeze" :keyTimes "0 ; 1" :keyPoints "0 ; 0"}
+       [:animateMotion {:xlink:href "#hulk-start" :begin "revealeye.end+0.1s" :dur "1s" :fill "freeze" :calc-mode "linear" :key-times "0 ; 1" :key-points "0 ; 0"}
         [:mpath {:xlink:href "#hulk"}]]
-       [:animateMotion {:xlink:href "#hulk-end" :begin "revealeye.end+0.1s" :dur "1s" :fill "freeze" :keyTimes "0 ; 1" :keyPoints "1 ; 0"}
+       [:animateMotion {:xlink:href "#hulk-end" :begin "revealeye.end+0.1s" :dur "1s" :fill "freeze" :calc-mode "linear" :key-times "0 ; 1" :key-points "1 ; 0"}
         [:mpath {:xlink:href "#hulk"}]]
 
        ; post-hidehulk
@@ -143,9 +143,9 @@
        [:animate {:id "hideear" :xlink:href "#ear" :attribute-name "stroke-dashoffset" :from "0" :to "1000" :begin "hidehulk.end" :dur "1s" :fill "freeze"}]
 
        ; hideear dots
-       [:animateMotion {:xlink:href "#ear-start" :begin "hidehulk.end" :dur "1s" :fill "freeze" :keyTimes "0 ; 1" :keyPoints "0 ; 0"}
+       [:animateMotion {:xlink:href "#ear-start" :begin "hidehulk.end" :dur "1s" :fill "freeze" :calc-mode "linear" :key-times "0 ; 1" :key-points "0 ; 0"}
         [:mpath {:xlink:href "#ear"}]]
-       [:animateMotion {:xlink:href "#ear-end" :begin "hidehulk.end" :dur "1s" :fill "freeze" :keyTimes "0 ; 1" :keyPoints "1 ; 0"}
+       [:animateMotion {:xlink:href "#ear-end" :begin "hidehulk.end" :dur "1s" :fill "freeze" :calc-mode "linear" :key-times "0 ; 1" :key-points "1 ; 0"}
         [:mpath {:xlink:href "#ear"}]]
 
        ; post-hideear
